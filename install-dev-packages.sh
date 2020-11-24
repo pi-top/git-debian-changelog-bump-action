@@ -7,7 +7,9 @@ set -euo pipefail
 IFS=$'\n\t'
 ###############################################################
 
-dev_packages=("git-buildpackage")
+# gbp provided by git-buildpackage
+# Debian release names provided by libdistro-info-perl
+dev_packages=("git-buildpackage", "libdistro-info-perl")
 
 # Tell apt-get we're never going to be able to give manual feedback
 export DEBIAN_FRONTEND=noninteractive
