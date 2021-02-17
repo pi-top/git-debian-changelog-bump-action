@@ -9,7 +9,7 @@ IFS=$'\n\t'
 
 # gbp provided by git-buildpackage
 # Debian release names provided by libdistro-info-perl
-dev_packages=("git-buildpackage", "libdistro-info-perl")
+dev_packages=("git-buildpackage" "libdistro-info-perl")
 
 # Tell apt-get we're never going to be able to give manual feedback
 export DEBIAN_FRONTEND=noninteractive
@@ -21,7 +21,7 @@ apt-get update
 apt-get -y upgrade
 
 # Install new packages, without unnecessary recommended packages
-apt-get -y install --no-install-recommends "${dev_packages[@]}"
+apt-get -y -t buster-backports install --no-install-recommends "${dev_packages[@]}"
 
 # Delete cached files we don't need anymore
 apt-get clean

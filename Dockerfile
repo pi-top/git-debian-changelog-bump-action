@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:buster-backports
 
 # Install packages via script, to minimise size:
 # https://pythonspeed.com/articles/system-packages-docker/
