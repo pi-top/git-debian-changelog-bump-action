@@ -31,13 +31,15 @@ gbp dch --verbose --git-author --ignore-branch --snapshot \
 echo "[bump-changelog] DEBUG: Showing changelog diff..."
 diff ./debian/changelog /tmp/changelog.orig
 
-if [[ "${RELEASE}" -ne 1 ]]; then
-  echo "[bump-changelog] Not in release mode - finished modifying changelog!"
-  return
-fi
+if [[ "${RELEASE}" -eq 1 ]]; then
+  echo "[bump-changelog] Updating changelog - release mode..."
+  gbp dch --verbose --git-author --ignore-branch --release \
+    --distribution=buster --spawn-editor=snapshot
 
-echo "[bump-changelog] Updating changelog - release mode..."
-gbp dch --verbose --git-author --ignore-branch --release \
-  --distribution=buster --spawn-editor=snapshot
+  echo "[bump-changelog] DEBUG: Showing changelog diff..."
+  diff ./debian/changelog /tmp/changelog.orig
+else
+  echo "[bump-changelog] Not in release mode - finished modifying changelog!"
+fi
 
 echo "[bump-changelog] DONE!"
