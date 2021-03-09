@@ -14,11 +14,5 @@ ENTRYPOINT ["/bump-changelog"]
 COPY  install-dev-packages.sh /.install-dev-packages
 RUN /.install-dev-packages
 
-# Add a user with userid 1000 and name nonroot
-RUN useradd --create-home -u 1000 nonroot
-
-# Run container as nonroot
-USER nonroot
-
 # Snapshot or release mode?
 ENV RELEASE 0
