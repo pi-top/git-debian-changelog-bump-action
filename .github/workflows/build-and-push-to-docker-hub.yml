@@ -36,7 +36,7 @@ jobs:
         with:
           platforms: linux/amd64
           push: true
-          tags: pitop/deb-build:latest
+          tags: pitop/gbp-dch-gen:latest
 
       - name: Show image digest
         if: github.ref == 'refs/heads/master'
