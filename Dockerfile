@@ -19,3 +19,6 @@ RUN useradd --create-home -u 1000 nonroot
 
 # Run container as nonroot
 USER nonroot
+
+# Snapshot or release mode?
+ENV RELEASE 0

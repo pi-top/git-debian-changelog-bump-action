@@ -24,11 +24,20 @@ echo "[bump-changelog] Snapshot Number: ${commit_diff}"
 echo "[bump-changelog] Backing up changelog..."
 cp ./debian/changelog /tmp/changelog.orig
 
-echo "[bump-changelog] Updating changelog..."
+echo "[bump-changelog] Updating changelog - snapshot..."
 gbp dch --verbose --git-author --ignore-branch --snapshot \
   --since=${commit} --snapshot-number=${commit_diff}
 
 echo "[build-deb] DEBUG: Showing changelog diff..."
 diff ./debian/changelog /tmp/changelog.orig
+
+if [[ "${RELEASE}" -ne "1" ]]; then
+  echo "[bump-changelog] Release mode not set - done modifying changelog!"
+  return
+fi
+
+echo "[bump-changelog] Updating changelog - release..."
+gbp dch --verbose --git-author --ignore-branch --release \
+  --distribution=buster --spawn-editor=snapshot
 
 echo "[build-deb] DONE!"
