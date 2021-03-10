@@ -15,8 +15,8 @@ git config --global user.email "deb-maintainers@pi-top.com"
 
 echo "[bump-changelog] Determining snapshot number..."
 since_tag=$(git tag -l v* | sort -V | tail -n1)
-if [[ -n "${since_tag}" ]]; then
-  echo "No version tags found - using number of commits to current branch for snapshot number"
+if [[ -z "${since_tag}" ]]; then
+  echo "[bump-changelog] No version tags found - using number of commits to current branch for snapshot number"
   since_commit=$(git log --pretty=format:%H | tail -n1)
   snapshot_number=$(git rev-list --count HEAD)
 else
