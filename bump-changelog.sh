@@ -14,19 +14,26 @@ git config --global user.name "pi-top"
 git config --global user.email "deb-maintainers@pi-top.com"
 
 echo "[bump-changelog] Determining snapshot number..."
-tag=$(git tag -l v* | sort -V | tail -n1)
-commit=$(git show-ref -s ${tag})
-commit_diff=$(git rev-list --count ${commit}..HEAD)
+since_tag=$(git tag -l v* | sort -V | tail -n1)
+if [[ -n "${since_tag}" ]]; then
+  echo "No version tags found - using number of commits to current branch for snapshot number"
+  since_commit=$(git log --pretty=format:%H | tail -n1)
+  snapshot_number=$(git rev-list --count HEAD)
+else
+  echo "[bump-changelog] Found version tag: ${since_tag}"
+  since_commit=$(git show-ref -s ${since_tag})
+  snapshot_number=$(git rev-list --count ${since_commit}..HEAD)
+fi
 
-echo "[bump-changelog] ${commit}: ${tag}"
-echo "[bump-changelog] Snapshot Number: ${commit_diff}"
+echo "[bump-changelog] Since: ${since_commit}"
+echo "[bump-changelog] Snapshot Number: ${snapshot_number}"
 
 echo "[bump-changelog] Backing up changelog..."
 cp ./debian/changelog /tmp/changelog.orig
 
 echo "[bump-changelog] Updating changelog - snapshot mode..."
 gbp dch --verbose --git-author --ignore-branch --snapshot \
-  --since="${commit}" --snapshot-number="${commit_diff}"
+  --since="${since_commit}" --snapshot-number="${snapshot_number}"
 
 echo "[bump-changelog] DEBUG: Showing changelog diff..."
 diff ./debian/changelog /tmp/changelog.orig || true
