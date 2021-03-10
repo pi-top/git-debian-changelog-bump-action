@@ -16,17 +16,17 @@ git config --global user.email "deb-maintainers@pi-top.com"
 echo "[bump-changelog] Determining snapshot number..."
 since_tag=$(git tag -l v* | sort -V | tail -n1)
 if [[ -z "${since_tag}" ]]; then
-  echo "[bump-changelog] No version tags found - using number of commits to current branch for snapshot number"
+  echo "[bump-changelog]     No version tags found - using number of commits to current branch for snapshot number"
   since_commit=$(git log --pretty=format:%H | tail -n1)
   snapshot_number=$(git rev-list --count HEAD)
 else
-  echo "[bump-changelog] Found version tag: ${since_tag}"
+  echo "[bump-changelog]     Found version tag: ${since_tag}"
   since_commit=$(git show-ref -s ${since_tag})
   snapshot_number=$(git rev-list --count ${since_commit}..HEAD)
 fi
 
-echo "[bump-changelog] Since: ${since_commit}"
-echo "[bump-changelog] Snapshot Number: ${snapshot_number}"
+echo "[bump-changelog]     Since: ${since_commit}"
+echo "[bump-changelog]     Snapshot Number: ${snapshot_number}"
 
 echo "[bump-changelog] Backing up changelog..."
 cp ./debian/changelog /tmp/changelog.orig
