@@ -44,7 +44,7 @@ if [[ "${RELEASE}" -eq 1 ]]; then
     --distribution=buster --spawn-editor=snapshot
 
   echo "[bump-changelog] DEBUG: Showing changelog diff..."
-  diff ./debian/changelog /tmp/changelog.orig
+  diff ./debian/changelog /tmp/changelog.orig || true
 else
   echo "[bump-changelog] Not in release mode - finished modifying changelog!"
 fi
