@@ -53,7 +53,7 @@ diff ./debian/changelog /tmp/changelog.orig || true
 if [[ "${RELEASE}" -eq 1 ]]; then
   echo "[bump-changelog] Updating changelog - release mode..."
   gbp dch --verbose --git-author --ignore-branch --release \
-    --distribution=${DEBIAN_BASE_IMAGE} --spawn-editor=snapshot
+    --distribution=$(lsb_release -cs) --spawn-editor=snapshot
 
   echo "[bump-changelog] DEBUG: Showing changelog diff..."
   diff ./debian/changelog /tmp/changelog.orig || true
