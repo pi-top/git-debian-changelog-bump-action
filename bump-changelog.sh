@@ -40,7 +40,7 @@ args=(
   "--snapshot-number=${snapshot_number}"
 )
 
-if [[ "${NEW_VERSION}" -ne 0 ]]; then
+if [[ "${NEW_VERSION}" != "0" ]]; then
   args+=("--new-version=${NEW_VERSION}")
 fi
 
