@@ -1,4 +1,4 @@
-FROM debian:buster-backports
+FROM debian:bullseye
 
 # Root of source code to build
 VOLUME /src
