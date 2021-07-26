@@ -31,9 +31,15 @@ echo "[bump-changelog]     Snapshot Number: ${snapshot_number}"
 echo "[bump-changelog] Backing up changelog..."
 cp ./debian/changelog /tmp/changelog.orig
 
+args="--verbose --git-author --ignore-branch --snapshot \
+  --since=${since_commit} --snapshot-number=${snapshot_number}"
+
+if [[ "${NEW_VERSION}" -ne 0 ]]; then
+  args="${args} --new-version=${NEW_VERSION}"
+fi
+
 echo "[bump-changelog] Updating changelog - snapshot mode..."
-gbp dch --verbose --git-author --ignore-branch --snapshot \
-  --since="${since_commit}" --snapshot-number="${snapshot_number}"
+gbp dch ${args}
 
 echo "[bump-changelog] DEBUG: Showing changelog diff..."
 diff ./debian/changelog /tmp/changelog.orig || true

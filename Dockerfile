@@ -16,3 +16,5 @@ RUN /.install-dev-packages
 
 # Snapshot or release mode?
 ENV RELEASE 0
+# Provided a new version explicitly?
+ENV NEW_VERSION 0
