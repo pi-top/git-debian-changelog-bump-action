@@ -31,7 +31,7 @@ jobs:
         with:
           build-args: DEBIAN_BASE_IMAGE=${{ matrix.base_image }}
           platforms: linux/amd64
-          push: github.ref == 'refs/heads/master'
+          push: ${{ github.ref }} == 'refs/heads/master'
           tags: pitop/gbp-dch-gen:${{ matrix.base_image }}
 
       - name: Show image digest
