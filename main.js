@@ -198,7 +198,7 @@ async function main() {
         core.startGroup("Show diff")
         await exec.exec("diff", [
             sourceDirectory + "/debian/changelog",
-            "/tmp/changelog.orig"
+            "/tmp/changelog.orig", "||", "true"
         ])
         core.endGroup()
     } catch (error) {
