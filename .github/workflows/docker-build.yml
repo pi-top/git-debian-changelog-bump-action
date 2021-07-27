@@ -5,7 +5,7 @@ on: push
 env:
   BASE_IMAGE_FOR_LATEST: "buster-backports"
   IMAGE_NAME: "pitop/git-buildpackage"
-  DEPLOY_BRANCH: "develop"
+  DEPLOY_BRANCH: "develop"  # TODO: replace with 'master' (note: hard-coded)
 
 jobs:
   build-push-docker-hub:

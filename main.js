@@ -42,24 +42,6 @@ async function main() {
         console.log(details)
         core.endGroup()
 
-        core.startGroup("Determine commit to base from")
-        await exec.exec("docker", [
-            "create",
-            "--name", container,
-            "--volume", workspaceDirectory + ":" + workspaceDirectory,
-            "--workdir", sourceDirectory,
-            "--env", "DEBIAN_FRONTEND=noninteractive",
-            "--env", "DPKG_COLORS=always",
-            "--env", "FORCE_UNSAFE_CONFIGURE=1",
-            "--tty",
-            "pitop/git-buildpackage:latest",
-            "sleep", "inf"
-        ])
-        core.endGroup()
-
-        // # TODO: check that HEAD does not match since_commit
-        // # --> this means there is nothing to bump!
-
         core.startGroup("Create container")
         await exec.exec("docker", [
             "create",
@@ -192,6 +174,9 @@ async function main() {
 
         console.log("Since: " + sinceCommit)
         console.log("Snapshot Number: " + snapshotNumber)
+
+        // # TODO: check that HEAD does not match since_commit
+        // # --> this means there is nothing to bump!
 
         core.startGroup("Bump changelog")
         await exec.exec("docker", [
