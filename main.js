@@ -127,12 +127,14 @@ async function main() {
             }
         }
         if (sinceTag === undefined) {
+            // Get last entry in git log (i.e. first commit in tree)
             await exec.exec("docker", [
                 "exec",
                 container,
                 "git", "log", "--pretty=format:%H"
             ],
             sinceCommitOptions)
+
             sinceCommit = sinceCommitStdout.split("\n")
             sinceCommit = sinceCommit[sinceCommit.length - 1]
 
@@ -142,15 +144,20 @@ async function main() {
                 "git", "rev-list", "--count", "HEAD",
                 snapshotNumberOptions
             ])
+
             console.log("No version tags found - using number of commits to current branch for snapshot number")
         } else {
             console.log("Found version tag: " + sinceTag)
+
             await exec.exec("docker", [
                 "exec",
                 container,
                 "git", "show-ref", "-s",
                 sinceTag
             ], sinceCommitOptions)
+
+            sinceCommit = sinceCommitStdout.split("\n")[0]
+
             await exec.exec("docker", [
                 "exec",
                 container,
