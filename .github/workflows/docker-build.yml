@@ -1,6 +1,9 @@
 name: Build
 
-on: push
+on:
+  push:
+    paths:
+      - "Dockerfile"
 
 env:
   BASE_IMAGE_FOR_LATEST: "buster-backports"
