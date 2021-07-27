@@ -29,7 +29,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Determine if using "latest" tag
-        run:
+        run: |
           base_image_is_stable=false
           if [[ "${{ matrix.base_image }}" == "${{ env.base_image_for_latest }}" ]]; then
             base_image_is_stable=true
