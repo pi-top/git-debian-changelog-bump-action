@@ -52,7 +52,7 @@ async function main() {
             "--env", "DPKG_COLORS=always",
             "--env", "FORCE_UNSAFE_CONFIGURE=1",
             "--tty",
-            "pitop/git-buildpackage:develop",
+            "pitop/git-buildpackage:latest",
             "sleep", "inf"
         ])
         core.endGroup()
@@ -70,7 +70,7 @@ async function main() {
             "--env", "DPKG_COLORS=always",
             "--env", "FORCE_UNSAFE_CONFIGURE=1",
             "--tty",
-            "pitop/git-buildpackage:develop",
+            "pitop/git-buildpackage:latest",
             "sleep", "inf"
         ])
         core.endGroup()
