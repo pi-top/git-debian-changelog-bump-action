@@ -195,12 +195,14 @@ async function main() {
         }
         core.endGroup()
 
-        core.startGroup("Show diff")
-        await exec.exec("diff", [
-            sourceDirectory + "/debian/changelog",
-            "/tmp/changelog.orig", "||", "true"
-        ])
-        core.endGroup()
+        // TODO: handle diff's non-zero exit code
+        //
+        // core.startGroup("Show diff")
+        // await exec.exec("diff", [
+        //     sourceDirectory + "/debian/changelog",
+        //     "/tmp/changelog.orig"
+        // ])
+        // core.endGroup()
     } catch (error) {
         core.setFailed(error.message)
     }
