@@ -1,13 +1,11 @@
-name: Build Image, Push to Docker Hub (on master)
+name: Build
 
 on:
   push:
-  schedule:
-    # Run daily at midnight
-    - cron:  "0 0 * * *"
 
 env:
-  base_image_for_latest: "buster-backports"
+  BASE_IMAGE_FOR_LATEST: "buster-backports"
+  IMAGE_NAME: "pitop/git-buildpackage"
 
 jobs:
   build-push-docker-hub:
@@ -31,7 +29,7 @@ jobs:
       - name: Determine if using "latest" tag
         run: |
           base_image_is_stable=false
-          if [[ "${{ matrix.base_image }}" == "${{ env.base_image_for_latest }}" ]]; then
+          if [[ "${{ matrix.base_image }}" == "${{ env.BASE_IMAGE_FOR_LATEST }}" ]]; then
             base_image_is_stable=true
           fi
 
@@ -41,12 +39,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: pitop/gbp-dch-gen
+          images: ${{ env.IMAGE_NAME }}
           flavor: |
             latest=${{ env.USE_LATEST_TAG }}
             prefix=${{ matrix.base_image }}-,onlatest=false
           tags: |
-            type=schedule
             type=ref,event=branch
 
       - name: Build and push
