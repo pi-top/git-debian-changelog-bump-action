@@ -4,14 +4,17 @@ on:
   push:
   schedule:
     # Run daily at midnight
-    - cron:  '0 0 * * *'
+    - cron:  "0 0 * * *"
+
+env:
+  base_image_for_latest: "buster-backports"
 
 jobs:
   build-push-docker-hub:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        base_image: ['buster-backports', 'bullseye']
+        base_image: ["buster-backports", "bullseye"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.2.0
@@ -19,21 +22,46 @@ jobs:
           fetch-depth: 0
 
       - name: Login to Docker Hub
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == "refs/heads/master"
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Determine if using "latest" tag
+        run:
+          if [[ "${{ matrix.base_image }}" == "${{ env.base_image_for_latest }}" ]]; then
+            echo "USE_LATEST_TAG=true" >> $GITHUB_ENV
+          else
+            echo "USE_LATEST_TAG=false" >> $GITHUB_ENV
+          fi
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: pitop/gbp-dch-gen
+          flavor: |
+            latest=${{ env.USE_LATEST_TAG }}
+            prefix=${{ matrix.base_image }},onlatest=false
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+
       - name: Build and push
         id: docker_build_push
         uses: docker/build-push-action@v2
         with:
+          context: .
           build-args: DEBIAN_BASE_IMAGE=${{ matrix.base_image }}
           platforms: linux/amd64
-          push: ${{ github.ref == 'refs/heads/master' }}
-          tags: pitop/gbp-dch-gen:${{ matrix.base_image }}
+          push: ${{ github.ref == "refs/heads/master" }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Show image digest
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == "refs/heads/master"
         run: echo ${{ steps.docker_build_push.outputs.digest }}
