@@ -43,19 +43,6 @@ async function main() {
         core.endGroup()
 
         core.startGroup("Determine commit to base from")
-        // since_tag=$(git tag -l v* | sort -V | tail -n1)
-        // if [[ -z "${since_tag}" ]]; then
-        //   echo "[bump-changelog]     No version tags found - using number of commits to current branch for snapshot number"
-        //   since_commit=$(git log --pretty=format:%H | tail -n1)
-        //   snapshot_number=$(git rev-list --count HEAD)
-        // else
-        //   echo "[bump-changelog]     Found version tag: ${since_tag}"
-        //   since_commit=$(git show-ref -s ${since_tag})
-        //   snapshot_number=$(git rev-list --count ${since_commit}..HEAD)
-        // fi
-
-        // echo "[bump-changelog]     Since: ${since_commit}"
-        // echo "[bump-changelog]     Snapshot Number: ${snapshot_number}"
         await exec.exec("docker", [
             "create",
             "--name", container,
@@ -72,11 +59,6 @@ async function main() {
 
         // # TODO: check that HEAD does not match since_commit
         // # --> this means there is nothing to bump!
-
-        // TODO: do bump semver
-        // TODO: confirm format is still correct (e.g. package version number for quilt format)
-        // Set to 'NEW_VERSION'
-
 
         core.startGroup("Create container")
         await exec.exec("docker", [
@@ -129,6 +111,88 @@ async function main() {
         ])
         core.endGroup()
 
+        core.startGroup("Retrieve tags & base commits for changelog")
+        let sinceTagStdout = "";
+        const sinceTagOptions = {}
+        sinceTagOptions.listeners = {
+            stdout: (data) => {
+                sinceTagStdout += data.toString();
+            }
+        }
+        await exec.exec("docker", [
+            "exec",
+            container,
+            "git",
+            "tag",
+            "-l",
+            "v*",
+            sinceTagOptions
+        ])
+        sinceTag = sinceTagStdout.split("\n");
+        sinceTag = sinceTag.sort()[sinceTag.length - 1];
+
+        let sinceCommitStdout = "";
+        const sinceCommitOptions = {};
+        sinceCommitOptions.listeners = {
+            stdout: (data) => {
+                sinceCommitStdout += data.toString();
+            }
+        }
+        let snapshotNumber = "";
+        const snapshotNumberOptions = {}
+        snapshotNumberOptions.listeners = {
+            stdout: (data) => {
+                snapshotNumber += data.toString();
+            }
+        }
+        if (sinceTag === undefinded) {
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "git",
+                "log",
+                "--pretty=format:%H",
+                sinceCommitOptions
+            ])
+            sinceCommit = sinceCommitStdout.split("\n")
+            sinceCommit = sinceCommit[sinceCommit.length - 1]
+
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "git",
+                "rev-list",
+                "--count",
+                "HEAD",
+                snapshotNumberOptions
+            ])
+            console.log("No version tags found - using number of commits to current branch for snapshot number")
+        } else {
+            console.log("Found version tag: " + sinceTag)
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "git",
+                "show-ref",
+                "-s",
+                sinceTag,
+                sinceCommitOptions
+            ])
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "git",
+                "rev-list",
+                "--count",
+                sinceCommitStdout + "...HEAD",
+                snapshotNumberOptions
+            ])
+        }
+        core.endGroup()
+
+        console.log("Since: " + sinceCommit)
+        console.log("Snapshot Number: " + snapshotNumber)
+
         core.startGroup("Bump changelog")
         await exec.exec("docker", [
             "exec",
@@ -139,8 +203,8 @@ async function main() {
             "--git-author",
             "--ignore-branch",
             "--snapshot",
-            "--since=${since_commit}",
-            "--snapshot-number=${snapshot_number}"
+            "--since=" + sinceCommit,
+            "--snapshot-number=" + snapshotNumber
         ])
         
         if (isReleaseVersion) {
