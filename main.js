@@ -107,9 +107,8 @@ async function main() {
             "git",
             "tag",
             "-l",
-            "v*",
-            sinceTagOptions
-        ])
+            "v*"
+        ], sinceTagOptions)
         sinceTag = sinceTagStdout.split("\n");
         sinceTag = sinceTag.sort()[sinceTag.length - 1];
 
@@ -131,21 +130,16 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "git",
-                "log",
-                "--pretty=format:%H",
-                sinceCommitOptions
-            ])
+                "git", "log", "--pretty=format:%H"
+            ],
+            sinceCommitOptions)
             sinceCommit = sinceCommitStdout.split("\n")
             sinceCommit = sinceCommit[sinceCommit.length - 1]
 
             await exec.exec("docker", [
                 "exec",
                 container,
-                "git",
-                "rev-list",
-                "--count",
-                "HEAD",
+                "git", "rev-list", "--count", "HEAD",
                 snapshotNumberOptions
             ])
             console.log("No version tags found - using number of commits to current branch for snapshot number")
@@ -154,21 +148,15 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "git",
-                "show-ref",
-                "-s",
-                sinceTag,
-                sinceCommitOptions
-            ])
+                "git", "show-ref", "-s",
+                sinceTag
+            ], sinceCommitOptions)
             await exec.exec("docker", [
                 "exec",
                 container,
-                "git",
-                "rev-list",
-                "--count",
-                sinceCommitStdout + "...HEAD",
-                snapshotNumberOptions
-            ])
+                "git", "rev-list", "--count",
+                sinceCommitStdout + "...HEAD"
+            ], snapshotNumberOptions)
         }
         core.endGroup()
 
@@ -182,11 +170,8 @@ async function main() {
         await exec.exec("docker", [
             "exec",
             container,
-            "gbp",
-            "dch",
-            "--verbose",
-            "--git-author",
-            "--ignore-branch",
+            "gbp", "dch", "--verbose",
+            "--git-author", "--ignore-branch",
             "--snapshot",
             "--since=" + sinceCommit,
             "--snapshot-number=" + snapshotNumber
@@ -196,11 +181,8 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "gbp",
-                "dch",
-                "--verbose",
-                "--git-author",
-                "--ignore-branch",
+                "gbp", "dch", "--verbose",
+                "--git-author", "--ignore-branch",
                 "--release",
                 "--distribution=$(lsb_release -cs)",
                 "--spawn-editor=snapshot",
