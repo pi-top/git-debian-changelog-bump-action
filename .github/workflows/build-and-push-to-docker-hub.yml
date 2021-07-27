@@ -30,11 +30,12 @@ jobs:
 
       - name: Determine if using "latest" tag
         run:
+          base_image_is_stable=false
           if [[ "${{ matrix.base_image }}" == "${{ env.base_image_for_latest }}" ]]; then
-            echo "USE_LATEST_TAG=true" >> $GITHUB_ENV
-          else
-            echo "USE_LATEST_TAG=false" >> $GITHUB_ENV
+            base_image_is_stable=true
           fi
+
+          echo "USE_LATEST_TAG=${base_image_is_stable}" >> $GITHUB_ENV
 
       - name: Docker meta
         id: meta
