@@ -28,6 +28,9 @@ fi
 echo "[bump-changelog]     Since: ${since_commit}"
 echo "[bump-changelog]     Snapshot Number: ${snapshot_number}"
 
+# TODO: check that HEAD does not match since_commit
+# --> this means there is nothing to bump!
+
 echo "[bump-changelog] Backing up changelog..."
 cp ./debian/changelog /tmp/changelog.orig
 
@@ -41,7 +44,7 @@ gbp dch --verbose --git-author --ignore-branch \
   --snapshot \
   --since=${since_commit} \
   --snapshot-number=${snapshot_number} \
-  "${new_version_arg}"
+  ${new_version_arg}
 
 echo "[bump-changelog] DEBUG: Showing changelog diff..."
 diff ./debian/changelog /tmp/changelog.orig || true
