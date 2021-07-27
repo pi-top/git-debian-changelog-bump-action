@@ -44,13 +44,10 @@ jobs:
           images: pitop/gbp-dch-gen
           flavor: |
             latest=${{ env.USE_LATEST_TAG }}
-            prefix=${{ matrix.base_image }},onlatest=false
+            prefix=${{ matrix.base_image }}-,onlatest=false
           tags: |
             type=schedule
             type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-            type=semver,pattern={{version}}
 
       - name: Build and push
         id: docker_build_push
