@@ -155,7 +155,7 @@ async function main() {
                 "exec",
                 container,
                 "git", "rev-list", "--count",
-                sinceCommitStdout + "...HEAD"
+                sinceCommit + "...HEAD"
             ], snapshotNumberOptions)
         }
         core.endGroup()
