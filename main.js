@@ -127,7 +127,7 @@ async function main() {
                 snapshotNumber += data.toString();
             }
         }
-        if (sinceTag === undefinded) {
+        if (sinceTag === undefined) {
             await exec.exec("docker", [
                 "exec",
                 container,
