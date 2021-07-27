@@ -165,13 +165,30 @@ async function main() {
                 sinceCommit + "...HEAD"
             ], snapshotNumberOptions)
         }
-        core.endGroup()
 
         console.log("Since: " + sinceCommit)
         console.log("Snapshot Number: " + snapshotNumber)
 
-        // # TODO: check that HEAD does not match since_commit
-        // # --> this means there is nothing to bump!
+        const headCommitOptions = {}
+        headCommitOptions.listeners = {
+            stdout: (data) => {
+                headCommit += data.toString();
+            }
+        }
+
+        await exec.exec("docker", [
+            "exec",
+            container,
+            "git", "rev-parse", "HEAD"
+        ], headCommitOptions)
+
+        console.log("HEAD: " + headCommit)
+        core.endGroup()
+
+        if (headCommit == sinceCommit) {
+            console.log("HEAD matches since - there is nothing to bump!")
+            return
+        }
 
         core.startGroup("Bump changelog")
         await exec.exec("docker", [
