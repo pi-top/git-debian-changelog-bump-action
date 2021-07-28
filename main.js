@@ -15,10 +15,7 @@ async function main() {
         }
 
         const isReleaseVersion = core.getInput("release").toLowerCase() === 'true' || false
-        // const releaseVersionBump = core.getInput("release_version_bump") || 'patch'
         const sourceRelativeDirectory = core.getInput("source_directory") || "./"
-
-        // TODO: confirm releaseVersionBump in ['major', 'minor', 'patch', 'prerelease']
 
         const workspaceDirectory = process.cwd()
         const sourceDirectory = path.join(workspaceDirectory, sourceRelativeDirectory)
@@ -41,7 +38,6 @@ async function main() {
             authorName: authorName,
             authorEmail: authorEmail,
             isReleaseVersion: isReleaseVersion,
-            // releaseVersionBump: releaseVersionBump,
             sourceRelativeDirectory: sourceRelativeDirectory
         }
         console.log(details)
@@ -167,7 +163,6 @@ async function main() {
         ])
         
         if (isReleaseVersion) {
-
             let distroStdout = "";
             const distroOptions = {}
             distroOptions.listeners = {
@@ -189,7 +184,6 @@ async function main() {
                 "--release",
                 "--distribution=" + distro,
                 "--spawn-editor=snapshot"
-                //"--new-version=" + NEW_VERSION
             ])
         }
         core.endGroup()

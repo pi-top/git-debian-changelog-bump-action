@@ -18,10 +18,6 @@ inputs:
     description: Bump version to final release (i.e. not snapshot)
     required: false
     default: false
-  # release_version_bump:
-  #   description: Type of version bump (according to actions-ecosystem/action-bump-semver)
-  #   required: false
-  #   default: 'patch'
 runs:
   using: node12
   main: main.js
