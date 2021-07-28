@@ -51,6 +51,8 @@ async function main() {
             "--env", "DEBIAN_FRONTEND=noninteractive",
             "--env", "DPKG_COLORS=always",
             "--env", "FORCE_UNSAFE_CONFIGURE=1",
+            "--env", "DEBFULLNAME=" + authorName,
+            "--env", "DEBEMAIL=" + authorEmail,
             "--tty",
             "pitop/git-buildpackage:latest",
             "sleep", "inf"
@@ -70,27 +72,6 @@ async function main() {
             container
         ])
         core.saveState("container", container)
-        core.endGroup()
-
-        core.startGroup("Configure authorship")
-        await exec.exec("docker", [
-            "exec",
-            container,
-            "git",
-            "config",
-            "--global",
-            "user.name",
-            authorName
-        ])
-        await exec.exec("docker", [
-            "exec",
-            container,
-            "git",
-            "config",
-            "--global",
-            "user.email",
-            authorEmail
-        ])
         core.endGroup()
 
         core.startGroup("Retrieve tags & base commits for changelog")
@@ -174,19 +155,42 @@ async function main() {
         await exec.exec("docker", [
             "exec",
             container,
-            "gbp", "dch", "--verbose",
-            "--git-author", "--ignore-branch",
+            "gbp", "dch", "--verbose", "--ignore-branch",
             "--snapshot",
             "--since=" + sinceCommit,
             "--snapshot-number=" + snapshotNumber
         ])
         
         if (isReleaseVersion) {
+
+            let distroStdout = "";
+            const distroOptions = {}
+            distroOptions.listeners = {
+                stdout: (data) => {
+                    distroStdout += data.toString();
+                }
+            }
             await exec.exec("docker", [
                 "exec",
                 container,
-                "gbp", "dch", "--verbose",
-                "--git-author", "--ignore-branch",
+                "lsb_release", "-cs"
+            ], distroOptions)
+            distro = distroStdout.split("\n")[0];
+
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "gbp", "dch", "--verbose", "--ignore-branch",
+                "--release",
+                "--distribution=" + distro,
+                "--spawn-editor=snapshot"
+                //"--new-version=" + NEW_VERSION
+            ])
+
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "gbp", "dch", "--verbose", "--ignore-branch",
                 "--release",
                 "--distribution=$(lsb_release -cs)",
                 "--spawn-editor=snapshot"
