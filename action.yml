@@ -1,0 +1,24 @@
+name: gbp-dch Version Bumper
+description: Update Debian source package changelog based on number of commits since last tagged version
+branding:
+  color: green
+  icon: package
+inputs:
+  author_name:
+    description: Author name for Debian changelog entry
+    required: true
+  author_email:
+    description: Author email for Debian changelog entry
+    required: true
+  source_directory:
+    description: Directory where Debian source package is, relative to workspace
+    required: false
+    default: ./
+  release:
+    description: Bump version to final release (i.e. not snapshot)
+    required: false
+    default: false
+runs:
+  using: node12
+  main: main.js
+  post: post.js
