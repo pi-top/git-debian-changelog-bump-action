@@ -7,18 +7,18 @@ const fs = require("fs")
 
 async function main() {
     try {
-        const authorName = core.getInput("author_name")
-        const authorEmail = core.getInput("author_email")
+        const authorName = core.getInput("author_name") || ""
+        const authorEmail = core.getInput("author_email") || ""
 
-        if (authorName !== "" || authorEmail !== "") {
+        if (authorName === "" || authorEmail === "") {
             throw "Invalid author information"
         }
 
         const isReleaseVersion = core.getInput("release").toLowerCase() === 'true' || false
-        const versionBump = core.getInput("version_bump") || 'patch'
+        // const releaseVersionBump = core.getInput("release_version_bump") || 'patch'
         const sourceRelativeDirectory = core.getInput("source_directory") || "./"
 
-        // TODO: confirm versionBump in ['major', 'minor', 'patch', 'prerelease']
+        // TODO: confirm releaseVersionBump in ['major', 'minor', 'patch', 'prerelease']
 
         const workspaceDirectory = process.cwd()
         const sourceDirectory = path.join(workspaceDirectory, sourceRelativeDirectory)
@@ -41,7 +41,7 @@ async function main() {
             authorName: authorName,
             authorEmail: authorEmail,
             isReleaseVersion: isReleaseVersion,
-            versionBump: versionBump,
+            // releaseVersionBump: releaseVersionBump,
             sourceRelativeDirectory: sourceRelativeDirectory
         }
         console.log(details)
