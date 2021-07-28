@@ -10,8 +10,9 @@ async function main() {
         const authorName = core.getInput("author_name")
         const authorEmail = core.getInput("author_email")
 
-        assert(authorName !== "")
-        assert(authorEmail !== "")
+        if (authorName !== "" || authorEmail !== "") {
+            throw "Invalid author information"
+        }
 
         const isReleaseVersion = core.getInput("release").toLowerCase() === 'true' || false
         const versionBump = core.getInput("version_bump") || 'patch'
