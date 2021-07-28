@@ -8,4 +8,5 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
   git-buildpackage \
   libdistro-info-perl \
+	lsb-release \
  && rm -rf /var/lib/apt/lists/*
