@@ -186,16 +186,6 @@ async function main() {
                 "--spawn-editor=snapshot"
                 //"--new-version=" + NEW_VERSION
             ])
-
-            await exec.exec("docker", [
-                "exec",
-                container,
-                "gbp", "dch", "--verbose", "--ignore-branch",
-                "--release",
-                "--distribution=$(lsb_release -cs)",
-                "--spawn-editor=snapshot"
-                //"--new-version=" + NEW_VERSION
-            ])
         }
         core.endGroup()
 
