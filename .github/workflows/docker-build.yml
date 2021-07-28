@@ -56,7 +56,7 @@ jobs:
           context: .
           build-args: DEBIAN_BASE_IMAGE=${{ matrix.base_image }}
           platforms: linux/amd64
-          push: ${{ github.ref == 'ref/heads/master' }}
+          push: ${{ github.ref == 'refs/heads/master' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
