@@ -10,6 +10,7 @@ env:
   BASE_IMAGE_FOR_LATEST: "buster-backports"
   IMAGE_NAME: "pitop/git-buildpackage"
   DEPLOY_BRANCH: "develop"
+  DEPLOY_REFNAME: "refs/heads/${{ env.DEPLOY_BRANCH }}"
 
 jobs:
   build-push-docker-hub:
