@@ -9,6 +9,10 @@ async function main() {
     try {
         const authorName = core.getInput("author_name")
         const authorEmail = core.getInput("author_email")
+
+        assert(authorName !== "")
+        assert(authorEmail !== "")
+
         const isReleaseVersion = core.getInput("release").toLowerCase() === 'true' || false
         const versionBump = core.getInput("version_bump") || 'patch'
         const sourceRelativeDirectory = core.getInput("source_directory") || "./"
