@@ -4,6 +4,12 @@ branding:
   color: green
   icon: package
 inputs:
+  snapshot_number:
+    description: Build number of the currently undocumented package
+    required: true
+  since:
+    description: Refname for the last git commit documented in the changelog
+    required: true
   author_name:
     description: Author name for Debian changelog entry
     required: true

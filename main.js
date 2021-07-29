@@ -7,8 +7,16 @@ const fs = require("fs")
 
 async function main() {
     try {
+        const snapshotNumber = core.getInput("snapshot_number") || ""
+        const sinceRefname = core.getInput("since") || ""
         const authorName = core.getInput("author_name") || ""
         const authorEmail = core.getInput("author_email") || ""
+
+        const authorEmail = core.getInput("author_email") || ""
+
+        if (snapshotNumber === "" || sinceRefname === "") {
+            throw "Invalid package information"
+        }
 
         if (authorName === "" || authorEmail === "") {
             throw "Invalid author information"
@@ -35,6 +43,8 @@ async function main() {
             version: version,
             revision: revision,
             workspaceDirectory: workspaceDirectory,
+            sinceCommit: sinceCommit,
+            snapshotNumber: snapshotNumber,
             authorName: authorName,
             authorEmail: authorEmail,
             isReleaseVersion: isReleaseVersion,
@@ -73,83 +83,6 @@ async function main() {
             container
         ])
         core.saveState("container", container)
-        core.endGroup()
-
-        core.startGroup("Retrieve tags & base commits for changelog")
-        let sinceTagStdout = "";
-        const sinceTagOptions = {}
-        sinceTagOptions.listeners = {
-            stdout: (data) => {
-                sinceTagStdout += data.toString();
-            }
-        }
-        await exec.exec("docker", [
-            "exec",
-            container,
-            "git",
-            "tag",
-            "-l",
-            "v*"
-        ], sinceTagOptions)
-        sinceTag = sinceTagStdout.split("\n");
-        sinceTag = sinceTag.sort()[sinceTag.length - 1];
-
-        let sinceCommitStdout = "";
-        const sinceCommitOptions = {};
-        sinceCommitOptions.listeners = {
-            stdout: (data) => {
-                sinceCommitStdout += data.toString();
-            }
-        }
-        let snapshotNumber = "";
-        const snapshotNumberOptions = {}
-        snapshotNumberOptions.listeners = {
-            stdout: (data) => {
-                snapshotNumber += data.toString();
-            }
-        }
-        if (sinceTag === undefined) {
-            // Get last entry in git log (i.e. first commit in tree)
-            await exec.exec("docker", [
-                "exec",
-                container,
-                "git", "log", "--pretty=format:%H"
-            ],
-            sinceCommitOptions)
-
-            sinceCommit = sinceCommitStdout.split("\n")
-            sinceCommit = sinceCommit[sinceCommit.length - 1]
-
-            await exec.exec("docker", [
-                "exec",
-                container,
-                "git", "rev-list", "--count", "HEAD",
-                snapshotNumberOptions
-            ])
-
-            console.log("No version tags found - using number of commits to current branch for snapshot number")
-        } else {
-            console.log("Found version tag: " + sinceTag)
-
-            await exec.exec("docker", [
-                "exec",
-                container,
-                "git", "show-ref", "-s",
-                sinceTag
-            ], sinceCommitOptions)
-
-            sinceCommit = sinceCommitStdout.split("\n")[0]
-
-            await exec.exec("docker", [
-                "exec",
-                container,
-                "git", "rev-list", "--count",
-                sinceCommit + "...HEAD"
-            ], snapshotNumberOptions)
-        }
-
-        console.log("Since: " + sinceCommit)
-        console.log("Snapshot Number: " + snapshotNumber)
         core.endGroup()
 
         core.startGroup("Bump changelog")
