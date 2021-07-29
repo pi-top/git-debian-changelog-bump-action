@@ -4,6 +4,8 @@ branding:
   color: green
   icon: package
 inputs:
+  ignore_regex:
+    description: Regex to ignore when generating Debian changelog entries
   author_name:
     description: Author name for Debian changelog entry
     required: true

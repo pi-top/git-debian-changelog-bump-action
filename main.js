@@ -7,6 +7,7 @@ const fs = require("fs")
 
 async function main() {
     try {
+        const ignoreRegex = core.getInput("ignore_regex") || ""
         const snapshotNumber = core.getInput("snapshot_number") || "1"
         const sinceRefname = core.getInput("since") || ""
         const authorName = core.getInput("author_name") || ""
@@ -80,10 +81,17 @@ async function main() {
         core.endGroup()
 
         core.startGroup("Bump changelog")
+
         gbpDchOpts = ["--auto"];
         if (sinceRefname !== "") {
             gbpDchOpts = ["--since", sinceRefname];
         }
+
+        ignoreRegexOpts = [];
+        if (sinceRefname !== "") {
+            gbpDchOpts = ["--ignore-regex=" + ignoreRegex];
+        }
+
         await exec.exec("docker", [
             "exec",
             container,
