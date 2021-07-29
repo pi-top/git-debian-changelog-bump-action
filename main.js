@@ -12,8 +12,6 @@ async function main() {
         const authorName = core.getInput("author_name") || ""
         const authorEmail = core.getInput("author_email") || ""
 
-        const authorEmail = core.getInput("author_email") || ""
-
         if (snapshotNumber === "" || sinceRefname === "") {
             throw "Invalid package information"
         }
