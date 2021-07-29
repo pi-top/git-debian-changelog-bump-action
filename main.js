@@ -95,7 +95,7 @@ async function main() {
         await exec.exec("docker", [
             "exec",
             container,
-            "gbp", "dch", "--verbose", "--ignore-branch",
+            "gbp", "dch", "--verbose", "--no-multimaint",
             "--snapshot",
             ...gbpDchOpts,
             "--snapshot-number=" + snapshotNumber
@@ -119,7 +119,7 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "gbp", "dch", "--verbose", "--ignore-branch",
+                "gbp", "dch", "--verbose", "--no-multimaint",
                 "--release",
                 "--distribution=" + distro,
                 "--spawn-editor=snapshot"
