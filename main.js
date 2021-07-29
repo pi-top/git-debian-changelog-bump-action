@@ -7,14 +7,10 @@ const fs = require("fs")
 
 async function main() {
     try {
-        const snapshotNumber = core.getInput("snapshot_number") || ""
+        const snapshotNumber = core.getInput("snapshot_number") || "1"
         const sinceRefname = core.getInput("since") || ""
         const authorName = core.getInput("author_name") || ""
         const authorEmail = core.getInput("author_email") || ""
-
-        if (snapshotNumber === "" || sinceRefname === "") {
-            throw "Invalid package information"
-        }
 
         if (authorName === "" || authorEmail === "") {
             throw "Invalid author information"
@@ -41,7 +37,7 @@ async function main() {
             version: version,
             revision: revision,
             workspaceDirectory: workspaceDirectory,
-            sinceCommit: sinceCommit,
+            sinceRefname: sinceRefname,
             snapshotNumber: snapshotNumber,
             authorName: authorName,
             authorEmail: authorEmail,
@@ -84,12 +80,16 @@ async function main() {
         core.endGroup()
 
         core.startGroup("Bump changelog")
+        gbpDchOpts = ["--auto"];
+        if (sinceRefname !== "") {
+            gbpDchOpts = ["--since", sinceRefname];
+        }
         await exec.exec("docker", [
             "exec",
             container,
             "gbp", "dch", "--verbose", "--ignore-branch",
             "--snapshot",
-            "--since=" + sinceCommit,
+            ...gbpDchOpts,
             "--snapshot-number=" + snapshotNumber
         ])
         
