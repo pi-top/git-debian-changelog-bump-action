@@ -25,11 +25,11 @@ async function main() {
         const workspaceDirectory = process.cwd()
         const sourceDirectory = path.join(workspaceDirectory, sourceRelativeDirectory)
 
-        const file = path.join(sourceDirectory, "debian/changelog")
+        const file = path.join(".", "debian/changelog")
         const changelog = await firstline(file)
         const regex = /^(?<pkg>.+) \(((?<epoch>[0-9]+):)?(?<version>[^:-]+)(-(?<revision>[^:-]+))?\) (?<packageDistribution>.+);/
         const match = changelog.match(regex)
-        const { pkg, epoch, version, revision, packageDistribution } = match.groups
+        let { pkg, epoch, version, revision, packageDistribution } = match.groups
 
         const container = pkg
 
@@ -134,6 +134,12 @@ async function main() {
             ])
         }
         core.endGroup()
+
+        newChangelog = await firstline(file);
+        ({ pkg, epoch, version, revision, packageDistribution } = newChangelog.match(regex).groups)
+        const newVersion = (epoch? epoch + ":" : "") + version + (revision? "-" + revision : "");
+        console.log("Bumped version is ", newVersion)
+        core.setOutput("version", newVersion);
 
         core.startGroup("Show diff")
         await exec.exec("diff", [
