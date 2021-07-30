@@ -93,7 +93,7 @@ async function main() {
             ignoreRegexEntr => {
                 gbpDchOpts.push("--ignore-regex=" + ignoreRegexEntr)
             }
-        );
+        )
 
         if (snapshotNumber !== "") {
             gbpDchOpts.push("--snapshot-number=" + snapshotNumber)
