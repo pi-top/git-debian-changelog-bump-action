@@ -25,7 +25,7 @@ async function main() {
         const workspaceDirectory = process.cwd()
         const sourceDirectory = path.join(workspaceDirectory, sourceRelativeDirectory)
 
-        const file = path.join(".", "debian/changelog")
+        const file = path.join(sourceDirectory, "debian/changelog")
         const changelog = await firstline(file)
         const regex = /^(?<pkg>.+) \(((?<epoch>[0-9]+):)?(?<version>[^:-]+)(-(?<revision>[^:-]+))?\) (?<packageDistribution>.+);/
         const match = changelog.match(regex)
