@@ -89,11 +89,9 @@ async function main() {
             gbpDchOpts = ["--since", sinceRefname];
         }
 
-        ignoreRegexList.map(
-            ignoreRegexEntr => {
-                gbpDchOpts.push("--ignore-regex=" + ignoreRegexEntr)
-            }
-        )
+        ignoreRegexList.forEach((ignoreRegexEntr) => {
+            gbpDchOpts.push("--ignore-regex=" + ignoreRegexEntr)
+        })
 
         if (snapshotNumber !== "") {
             gbpDchOpts.push("--snapshot-number=" + snapshotNumber)
