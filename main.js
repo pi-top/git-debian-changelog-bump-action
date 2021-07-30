@@ -89,9 +89,11 @@ async function main() {
             gbpDchOpts = ["--since", sinceRefname];
         }
 
-        for (let i = 0; i < ignoreRegexList.length; i++) {
-            gbpDchOpts.push("--ignore-regex=" + ignoreRegexList[i])
-        }
+        ignoreRegexList.map(
+            ignoreRegexEntr => {
+                gbpDchOpts.push("--ignore-regex=" + ignoreRegexEntr)
+            }
+        );
 
         if (snapshotNumber !== "") {
             gbpDchOpts.push("--snapshot-number=" + snapshotNumber)
