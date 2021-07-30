@@ -22,6 +22,9 @@ inputs:
   release:
     description: Bump version to final release (i.e. not snapshot)
     default: false
+outputs:
+  version:
+    description: package version written in changelog
 runs:
   using: node12
   main: main.js
