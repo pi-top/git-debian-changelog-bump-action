@@ -101,6 +101,8 @@ async function main() {
             "exec",
             container,
             "gbp", "dch", "--verbose", "--no-multimaint",
+            // Ignore branch in case this is a checked out PR
+            "--ignore-branch",
             "--snapshot",
             ...gbpDchOpts,
         ])
@@ -124,6 +126,8 @@ async function main() {
                 "exec",
                 container,
                 "gbp", "dch", "--verbose", "--no-multimaint",
+                // Ignore branch in case this is a checked out PR
+                "--ignore-branch",
                 "--release",
                 "--distribution=" + distro,
                 "--spawn-editor=snapshot"
