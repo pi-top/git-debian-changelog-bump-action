@@ -7,8 +7,10 @@ const fs = require("fs")
 
 async function main() {
     try {
-        const ignoreRegex = core.getInput("ignore_regex") || ""
-        const snapshotNumber = core.getInput("snapshot_number") || "1"
+        const ignoreRegexStr = core.getInput("ignore_regex") || ""
+        const ignoreRegexList = ignoreRegexStr.split("\n").filter(x => x !== "")
+
+        const snapshotNumber = core.getInput("snapshot_number") || ""
         const sinceRefname = core.getInput("since") || ""
         const authorName = core.getInput("author_name") || ""
         const authorEmail = core.getInput("author_email") || ""
@@ -87,9 +89,12 @@ async function main() {
             gbpDchOpts = ["--since", sinceRefname];
         }
 
-        ignoreRegexOpts = [];
-        if (sinceRefname !== "") {
-            gbpDchOpts = ["--ignore-regex=" + ignoreRegex];
+        for (let i = 0; i < ignoreRegexList.length; i++) {
+            gbpDchOpts.push("--ignore-regex=" + ignoreRegexList[i])
+        }
+
+        if (snapshotNumber !== "") {
+            gbpDchOpts.push("--snapshot-number=" + snapshotNumber)
         }
 
         await exec.exec("docker", [
@@ -98,7 +103,6 @@ async function main() {
             "gbp", "dch", "--verbose", "--no-multimaint",
             "--snapshot",
             ...gbpDchOpts,
-            "--snapshot-number=" + snapshotNumber
         ])
         
         if (isReleaseVersion) {
