@@ -10,3 +10,6 @@ RUN apt-get update \
   libdistro-info-perl \
 	lsb-release \
  && rm -rf /var/lib/apt/lists/*
+
+# The runner's checkout is owned by a different user than the container's root
+RUN git config --system --add safe.directory '*'
