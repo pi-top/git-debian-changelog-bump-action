@@ -62,7 +62,7 @@ async function main() {
             "--env", "DEBFULLNAME=" + authorName,
             "--env", "DEBEMAIL=" + authorEmail,
             "--tty",
-            "pitop/git-buildpackage:latest",
+            "pitop/git-buildpackage:bookworm-master",
             "sleep", "inf"
         ])
         core.endGroup()
