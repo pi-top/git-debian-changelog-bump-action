@@ -132,6 +132,14 @@ async function main() {
                 "--distribution=" + distro,
                 "--spawn-editor=snapshot"
             ])
+
+            // gbp dch --release keeps the previous entry's distribution, not --distribution
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "debchange", "--distribution=" + distro, "--force-distribution",
+                "--no-auto-nmu", "--nomultimaint", "--", ""
+            ])
         }
         core.endGroup()
 
