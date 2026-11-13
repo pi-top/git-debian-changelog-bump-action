@@ -22,6 +22,9 @@ inputs:
   release:
     description: Bump version to final release (i.e. not snapshot)
     default: false
+  version_scheme:
+    description: "'semver' bumps the patch version (x.y.z -> x.y.z+1, revision reset to 1); 'date' sets the version to today's date (YYYY.M.D)"
+    default: semver
 outputs:
   version:
     description: package version written in changelog

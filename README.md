@@ -7,6 +7,13 @@ Snapshot numbers are based off of the number of commits from:
   * the latest semver tag
   * the first commit in its history
 
+### Versioning
+By default (`version_scheme: semver`) the new entry bumps the patch version and resets the Debian revision: `0.35.0-5` becomes `0.35.1-1`, and a native `1.2.3` becomes `1.2.4`. For a feature release, edit the version in the release PR (e.g. to `0.36.0-1`). Versions that aren't `x.y.z` keep the old behaviour of bumping the Debian revision.
+
+`version_scheme: date` sets the version to the UTC date, `YYYY.M.D` (a second release on the same day gets `.1`, `.2`, ...).
+
+If the top changelog entry is `UNRELEASED`, its version is kept as written.
+
 ### Notes
 You need to check out your code with `fetch-depth: 0` so that tags are fetched.
 

@@ -5,6 +5,29 @@ const hub = require("docker-hub-utils")
 const path = require("path")
 const fs = require("fs")
 
+// Next version (revision reset to 1 if the package has one); null lets gbp bump the revision
+function getNextVersion(scheme, version, revision, now = new Date()) {
+    const suffix = revision ? "-1" : ""
+
+    if (scheme === "date") {
+        const today = now.getUTCFullYear() + "." + (now.getUTCMonth() + 1) + "." + now.getUTCDate()
+        if (version === today) {
+            return today + ".1" + suffix
+        }
+        if (version.startsWith(today + ".")) {
+            const n = parseInt(version.slice(today.length + 1), 10)
+            return today + "." + (n + 1) + suffix
+        }
+        return today + suffix
+    }
+
+    const parts = version.match(/^(\d+)\.(\d+)\.(\d+)$/)
+    if (!parts) {
+        return null
+    }
+    return parts[1] + "." + parts[2] + "." + (parseInt(parts[3], 10) + 1) + suffix
+}
+
 async function main() {
     try {
         const ignoreRegexStr = core.getInput("ignore_regex") || ""
@@ -17,6 +40,11 @@ async function main() {
 
         if (authorName === "" || authorEmail === "") {
             throw "Invalid author information"
+        }
+
+        const versionScheme = core.getInput("version_scheme") || "semver"
+        if (!["semver", "date"].includes(versionScheme)) {
+            throw new Error("Invalid version_scheme: " + versionScheme)
         }
 
         const isReleaseVersion = core.getInput("release").toLowerCase() === 'true' || false
@@ -45,6 +73,7 @@ async function main() {
             authorName: authorName,
             authorEmail: authorEmail,
             isReleaseVersion: isReleaseVersion,
+            versionScheme: versionScheme,
             sourceRelativeDirectory: sourceRelativeDirectory
         }
         console.log(details)
@@ -95,6 +124,16 @@ async function main() {
 
         if (snapshotNumber !== "") {
             gbpDchOpts.push("--snapshot-number=" + snapshotNumber)
+        }
+
+        // An UNRELEASED entry already carries the version someone chose
+        if (packageDistribution !== "UNRELEASED") {
+            const nextVersion = getNextVersion(versionScheme, version, revision)
+            if (nextVersion) {
+                gbpDchOpts.push("--new-version=" + (epoch ? epoch + ":" : "") + nextVersion)
+            } else {
+                core.warning("Version " + version + " is not x.y.z; bumping the Debian revision instead")
+            }
         }
 
         await exec.exec("docker", [
