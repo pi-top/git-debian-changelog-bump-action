@@ -43,7 +43,7 @@ async function main() {
         }
 
         const versionScheme = core.getInput("version_scheme") || "semver"
-        if (!["semver", "date"].includes(versionScheme)) {
+        if (!["semver", "date", "revision"].includes(versionScheme)) {
             throw new Error("Invalid version_scheme: " + versionScheme)
         }
 
@@ -127,7 +127,8 @@ async function main() {
         }
 
         // An UNRELEASED entry already carries the version someone chose
-        if (packageDistribution !== "UNRELEASED") {
+        // revision: upstream code we only package, so keep its version
+        if (packageDistribution !== "UNRELEASED" && versionScheme !== "revision") {
             const nextVersion = getNextVersion(versionScheme, version, revision)
             if (nextVersion) {
                 gbpDchOpts.push("--new-version=" + (epoch ? epoch + ":" : "") + nextVersion)

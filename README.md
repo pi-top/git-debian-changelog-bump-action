@@ -12,6 +12,8 @@ By default (`version_scheme: semver`) the new entry bumps the patch version and 
 
 `version_scheme: date` sets the version to the UTC date, `YYYY.M.D` (a second release on the same day gets `.1`, `.2`, ...).
 
+`version_scheme: revision` only bumps the Debian revision (`0.6.0-2` becomes `0.6.0-3`). Use it when the repo packages someone else's code, so the version stays the upstream release.
+
 If the top changelog entry is `UNRELEASED`, its version is kept as written.
 
 ### Notes
